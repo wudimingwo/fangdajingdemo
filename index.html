@@ -1,0 +1,140 @@
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>放大镜</title>
+		<style type="text/css">
+			.wrapper {
+				width: 500px;
+				height: 500px;
+				border: 1px solid black;
+				margin: 50px;
+				position: absolute;
+			}
+			
+			.imgContent {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+			}
+			
+			.imgContent img {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.moveBox {
+				position: absolute;
+				display: none;
+				background-color: #fff;
+				opacity: 0.5;
+			}
+			
+			.bigImg {
+				position: absolute;
+				left: 105%;
+				width: 100%;
+				height: 100%;
+				border: 1px solid black;
+				display: none;
+				overflow: hidden;
+			}
+			
+			.bigImg img {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="wrapper">
+			<div class="imgContent">
+				<div class="img">
+					<img src="img/1.jpg" />
+				</div>
+				<div class="moveBox">
+
+				</div>
+			</div>
+			<div class="bigImg">
+				<img src="img/1.jpg" />
+			</div>
+		</div>
+
+		<script src="jqmin.js" type="text/javascript" charset="utf-8"></script>
+
+		<script type="text/javascript">
+			// 选取所有需要的dom 元素
+			var wrapper = $(".wrapper");
+			var imgContent = $(".imgContent");
+			var moveBox = $(".moveBox");
+			var bigImg = $(".bigImg");
+			var bigImgImg = bigImg.find("img");
+			// imgContent 添加事件 move leave
+			// 显示moveBox 和 bigImg
+
+			imgContent.on('mousemove', function(e) {
+				
+				render(e,2);
+				
+
+			}).on('mouseleave', function(e) {
+				// 两者全消失
+				moveBox.css({
+					'display': 'none'
+				})
+
+				bigImg.css({
+					'display': 'none'
+				})
+			})
+
+			function render(e, mul) {
+				// 确定尺寸和位置
+				// 尺寸由比例生成
+				var w = imgContent.width() / mul;
+				var h = imgContent.height() / mul;
+				var l = imgContent.offset().left;
+				var t = imgContent.offset().top;
+				var x = e.clientX - l - w/2;
+				var y = e.clientY - t - h/2;
+				
+				// 移动边界, 四个边界
+				var minL = 0;
+				var maxL = imgContent.width() - w;
+				var minT = 0; 
+				var maxT = imgContent.height() - h;
+				
+				var endL = x < minL ? minL : x > maxL ? maxL : x;
+				var endT = y < minT ? minT : y > maxT ? maxT : y;
+				moveBox.css({
+					'display': 'block',
+					'left' : endL,
+					'top' : endT,
+					'width' : w,
+					'height' : h
+				});
+				
+				// 根据 mul 放大img
+				// 确定位置
+				// x / imgContent.width == x / width
+				
+				
+				bigImg.css({
+					'display': 'block'
+				})
+				bigImgImg.css({
+					'width' : imgContent.width() * mul,
+					'height' : imgContent.height() * mul,
+					'left' :  -endL * mul,
+					'top' : -endT * mul
+				})
+			}
+		</script>
+
+	</body>
+
+</html>
